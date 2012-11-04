@@ -1,0 +1,49 @@
+{
+   "abstract" : "Password storage implementation based on GNOME Keyring.",
+   "author" : [
+      "Marcin Kasperski <Marcin.Kasperski@mekk.waw.pl>"
+   ],
+   "dynamic_config" : 1,
+   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.110440",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Passwd-Keyring-Gnome",
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "ExtUtils::CBuilder" : 0,
+            "Module::Build" : "0.19",
+            "Test::More" : 0,
+            "Test::Pod::Coverage" : "1.000008"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "Module::Build" : "0.38"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "perl" : "5.006"
+         }
+      }
+   },
+   "provides" : {
+      "Passwd::Keyring::Gnome" : {
+         "file" : "lib/Passwd/Keyring/Gnome.pm",
+         "version" : "0.21"
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "license" : [
+         "http://dev.perl.org/licenses/"
+      ]
+   },
+   "version" : "0.21"
+}
