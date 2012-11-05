@@ -5,7 +5,7 @@ use strict;
 #use parent 'Keyring';
 
 require DynaLoader;
-require AutoLoader;
+#require AutoLoader;
 
 use base 'DynaLoader';
 
@@ -15,11 +15,11 @@ Passwd::Keyring::Gnome - Password storage implementation based on GNOME Keyring.
 
 =head1 VERSION
 
-Version 0.22
+Version 0.23
 
 =cut
 
-our $VERSION = '0.22';
+our $VERSION = '0.23';
 
 bootstrap Passwd::Keyring::Gnome $VERSION;
 
@@ -140,5 +140,4 @@ See http://dev.perl.org/licenses/ for more information.
 
 
 1; # End of Passwd::Keyring::Gnome
-
 

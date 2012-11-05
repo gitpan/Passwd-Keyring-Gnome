@@ -36,7 +36,7 @@
    "provides" : {
       "Passwd::Keyring::Gnome" : {
          "file" : "lib/Passwd/Keyring/Gnome.pm",
-         "version" : "0.22"
+         "version" : "0.23"
       }
    },
    "release_status" : "stable",
@@ -45,5 +45,5 @@
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "0.22"
+   "version" : "0.23"
 }
