@@ -15,11 +15,11 @@ Passwd::Keyring::Gnome - Password storage implementation based on GNOME Keyring.
 
 =head1 VERSION
 
-Version 0.21
+Version 0.22
 
 =cut
 
-our $VERSION = '0.21';
+our $VERSION = '0.22';
 
 bootstrap Passwd::Keyring::Gnome $VERSION;
 
@@ -92,6 +92,20 @@ sub clear_password {
     my ($self, $user_name, $domain) = @_;
     Passwd::Keyring::Gnome::_set_password($user_name, "", $domain);
 }
+
+=head2 is_persistent
+
+Returns info, whether this keyring actually saves passwords persistently.
+
+(true in this case)
+
+=cut
+
+sub is_persistent {
+    my ($self) = @_;
+    return 1;
+}
+
 
 =head1 AUTHOR
 
