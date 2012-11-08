@@ -1,5 +1,8 @@
 Revision history for Keyring-Gnome
 
+0.2501  2012-11-08
+        Small documentation fixes, more info in CPAN metadata
+
 0.25    2012-11-08
         Implementing updated app and group semantics (only group is part of password key,
         app is not used at all for a moment).

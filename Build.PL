@@ -23,17 +23,18 @@ my $builder = Module::Build->new(
     },
     add_to_cleanup      => [ 'Passwd-Keyring-Gnome-*' ],
     create_makefile_pl => 'traditional',
-    # pkg-config --cflags gnome-keyring-1
-    #extra_compiler_flags => '-I/usr/include/gnome-keyring-1 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include',
     extra_compiler_flags => $gnome_keyring_pkg_info{cflags},
-    # pkg-config --libs gnome-keyring-1
-    #extra_linker_flags => '-lgnome-keyring -lglib-2.0',
     extra_linker_flags => $gnome_keyring_pkg_info{libs},
     needs_compiler => 1,
-    #c_source => 'src',
-    #xs_files => {
-        #'./Costam.xs' => 'lib/MyMod/Costam.xs',
-    #},
+    meta_merge => {
+        keywords => [ qw/ passwords security secure-storage keyring GNOME seahorse gnome-keyring / ],
+        resources => {
+            license     => 'http://dev.perl.org/licenses/',
+            homepage    => 'http://bitbucket.org/Mekk/perl-keyring-gnome',
+            repository => 'http://bitbucket.org/Mekk/perl-keyring-gnome',
+            bugtracker => 'https://bitbucket.org/Mekk/perl-keyring-gnome/issues',
+        },
+    },
 );
 
 $builder->create_build_script();
