@@ -15,11 +15,11 @@ Passwd::Keyring::Gnome - Password storage implementation based on GNOME Keyring.
 
 =head1 VERSION
 
-Version 0.23
+Version 0.24
 
 =cut
 
-our $VERSION = '0.23';
+our $VERSION = '0.24';
 
 bootstrap Passwd::Keyring::Gnome $VERSION;
 
@@ -37,6 +37,10 @@ Gnome Keyring based implementation of L<Keyring>.
     # plus
     $keyring->clear_password("John", "my-pseudodomain");
 
+Note: see L<Passwd::Keyring::KeyringAPI> for detailed comments on
+keyring method semantics (this document is installed with
+Passwd::Keyring::Auto package).
+
 =head1 SUBROUTINES/METHODS
 
 =head2 new
@@ -47,7 +51,11 @@ seem to be available.
 =cut
 
 sub new {
-    my $self = {};
+    my ($cls, %opts) = @_;
+    my $self = {
+        app => $opts{app} || 'Passwd::Keyring',
+        group => $opts{group} || 'Unclassified passwords',
+    };
     bless $self;
 
     # TODO: catch and rethrow exceptions
@@ -65,7 +73,8 @@ Sets (stores) password identified by given domain for given user
 
 sub set_password {
     my ($self, $user_name, $user_password, $domain) = @_;
-    Passwd::Keyring::Gnome::_set_password($user_name, $user_password, $domain);
+    Passwd::Keyring::Gnome::_set_password($user_name, $user_password, $domain,
+                                          $self->{app}, $self->{group});
 }
 
 =head2 get_password($user_name, $domain)
@@ -77,8 +86,9 @@ If such password can not be found, returns undef.
 
 sub get_password {
     my ($self, $user_name, $domain) = @_;
-    my $pwd = Passwd::Keyring::Gnome::_get_password($user_name, $domain);
-    return undef if (!defined($pwd)) or $pwd eq "";
+    my $pwd = Passwd::Keyring::Gnome::_get_password($user_name, $domain,
+                                                    $self->{app}, $self->{group});
+    #return undef if (!defined($pwd)) or $pwd eq "";
     return $pwd;
 }
 
@@ -86,11 +96,14 @@ sub get_password {
 
 Removes given password (if present)
 
+Returns how many passwords actually were removed 
+
 =cut
 
 sub clear_password {
     my ($self, $user_name, $domain) = @_;
-    Passwd::Keyring::Gnome::_set_password($user_name, "", $domain);
+    return Passwd::Keyring::Gnome::_clear_password(
+        $user_name, $domain, $self->{app}, $self->{group});
 }
 
 =head2 is_persistent

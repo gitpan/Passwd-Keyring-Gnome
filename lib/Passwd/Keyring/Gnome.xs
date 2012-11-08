@@ -20,7 +20,7 @@ _get_default_keyring_name()
         RETVAL
 
 void
-_set_password(const char *user, const char* password, const char *domain)
+_set_password(const char *user, const char* password, const char *domain, const char *app, const char *group)
     CODE:
         guint32 item_id;
         if(GNOME_KEYRING_RESULT_OK == 
@@ -28,8 +28,8 @@ _set_password(const char *user, const char* password, const char *domain)
               NULL, /* keyring (null=default) */
               user,
               domain,
-              SERVER, /* server */
-              NULL, /* remote object */
+              app, /* SERVER, */ /* server */
+              group, /*NULL,*/ /* remote object */
               NULL, /* protocol */
               NULL, /* auth-type */
               0,    /* port */
@@ -46,15 +46,15 @@ _set_password(const char *user, const char* password, const char *domain)
 
 
 SV*
-_get_password(const char *user, const char *domain)
+_get_password(const char *user, const char *domain, const char *app, const char *group)
     CODE:
         GList *results;
         GnomeKeyringResult status = 
              gnome_keyring_find_network_password_sync(
                 user,
                 domain,
-                SERVER, /* server */
-                NULL, /* remote object */
+                app, /*SERVER,*/ /* server */
+                group, /*NULL,*/ /* remote object */
                 NULL, /* protocol */
                 NULL, /* auth-type */
                 0,    /* port */
@@ -97,6 +97,67 @@ _get_password(const char *user, const char *domain)
         else
         {
             croak("Failed to find a password. Error code: %d", status);
+        }
+    OUTPUT:
+        RETVAL
+
+
+int
+_clear_password(const char *user, const char *domain, const char *app, const char *group)
+    CODE:
+        /* Zwraca ilość skasowanych haseł */
+        GList *results;
+        GnomeKeyringResult status = 
+             gnome_keyring_find_network_password_sync(
+                user,
+                domain,
+                app, /*SERVER,*/ /* server */
+                group, /*NULL,*/ /* remote object */
+                NULL, /* protocol */
+                NULL, /* auth-type */
+                0,    /* port */
+                &results);
+        if(status == GNOME_KEYRING_RESULT_OK)
+        {
+            GList *node;
+            GnomeKeyringNetworkPasswordData *item;
+            RETVAL = 0;
+            for (node = g_list_first (results);
+                 node != NULL;
+                 node = g_list_next (node))
+            {
+              item = (GnomeKeyringNetworkPasswordData *) node->data;
+              status = gnome_keyring_item_delete_sync(
+                     item->keyring, item->item_id);
+              if(status != GNOME_KEYRING_RESULT_OK)
+              {
+                  croak("Failed to delete password %d. Error code: %d",
+                        item->item_id, status);
+              }
+              ++ RETVAL;
+              /*
+              printf("Found item.\n");
+              printf("  item-id: %d\n", item->item_id);
+              printf("  keyring: %s\n", item->keyring);
+              printf("  server: %s\n", item->server);
+              printf("  object: %s\n", item->object);
+              printf("  port: %d\n", item->port);
+              printf("  user: %s\n", item->user);
+              printf("  domain: %s\n", item->domain);
+              printf("  password: %s\n", item->password); */
+              break;
+
+            }
+
+            gnome_keyring_network_password_list_free(results);
+        }
+        else if (status == GNOME_KEYRING_RESULT_NO_MATCH)
+        {
+            RETVAL = 0;
+        }
+        else
+        {
+            croak("Failed to check password. Error code: %d", status);
         }
     OUTPUT:
         RETVAL
