@@ -2,52 +2,98 @@
 
 use strict;
 use warnings;
-#use Test::More tests => 11;
-use Test::More skip_all => "Currently app and group are meaningful. To be decided whether to keep this behaviour";
+use Test::More tests => 16;
 
 use Passwd::Keyring::Gnome;
 
 my $USER = "Herakliusz";
 my $DOMAIN = "test domain";
 my $PWD = "arcytajne haslo";
+my $PWD2 = "inny sekret";
 
-my $orig_ring = Passwd::Keyring::Gnome->new(app=>"Passwd::Keyring::Unit tests", group=>"Yet so");
+my $APP1 = "Passwd::Keyring::Unit tests (1)";
+my $APP2 = "Passwd::Keyring::Unit tests (2)";
+my $GROUP1 = "Passwd::Keyring::Unit tests - group 1";
+my $GROUP2 = "Passwd::Keyring::Unit tests - group 2";
+my $GROUP3 = "Passwd::Keyring::Unit tests - group 3";
 
-ok( defined($orig_ring) && ref $orig_ring eq 'Passwd::Keyring::Gnome',   'new() works' );
+my @cleanups;
 
-ok( ! defined($orig_ring->get_password($USER, $DOMAIN)), "initially unset");
+{
+    my $ring = Passwd::Keyring::Gnome->new(app=>$APP1, group=>$GROUP1);
 
-$orig_ring->set_password($USER, $PWD, $DOMAIN);
-ok(1, "set password");
+    ok( defined($ring) && ref $ring eq 'Passwd::Keyring::Gnome',   'new() works' );
 
-ok( $orig_ring->get_password($USER, $DOMAIN) eq $PWD, "normal get works");
+    ok( ! defined($ring->get_password($USER, $DOMAIN)), "initially unset");
+
+    $ring->set_password($USER, $PWD, $DOMAIN);
+    ok(1, "set password");
+
+    ok( $ring->get_password($USER, $DOMAIN) eq $PWD, "normal get works");
+
+    push @cleanups, sub {
+        ok( $ring->clear_password($USER, $DOMAIN) eq 1, "clearing");
+    };
+}
 
 
-# Another object with the same app/group
+# Another object with the same app and group
 
-my $ring = Passwd::Keyring::Gnome->new(app=>"Passwd::Keyring::Unit tests", group=>"Yet so");
+{
+    my $ring = Passwd::Keyring::Gnome->new(app=>$APP1, group=>$GROUP1);
 
-ok( defined($ring) && ref $ring eq 'Passwd::Keyring::Gnome', 'second new() works' );
+    ok( defined($ring) && ref $ring eq 'Passwd::Keyring::Gnome', 'second new() works' );
 
-ok( $ring->get_password($USER, $DOMAIN) eq $PWD, "get from another ring with the same data works");
+    ok( $ring->get_password($USER, $DOMAIN) eq $PWD, "get from another ring with the same data works");
+}
+
+# Only app changes
+{
+    my $ring = Passwd::Keyring::Gnome->new(app=>$APP2, group=>$GROUP1);
+
+    ok( defined($ring) && ref $ring eq 'Passwd::Keyring::Gnome', 'third new() works' );
+
+    ok( $ring->get_password($USER, $DOMAIN) eq $PWD, "get from another ring with changed app but same group works");
+}
 
 # Only group changes
+my $sec_ring;
+{
+    my $ring = Passwd::Keyring::Gnome->new(app=>$APP1, group=>$GROUP2);
 
-$ring = Passwd::Keyring::Gnome->new(app=>"Passwd::Keyring::Unit tests", group=>"It has changed");
+    ok( defined($ring) && ref $ring eq 'Passwd::Keyring::Gnome', 'third new() works' );
 
-ok( defined($ring) && ref $ring eq 'Passwd::Keyring::Gnome', 'third new() works' );
+    ok( ! defined($ring->get_password($USER, $DOMAIN)), "changing group forces another password");
 
-ok( $ring->get_password($USER, $DOMAIN) eq $PWD, "get from another ring with different group works");
+    # To test whether original won't be spoiled
+    $ring->set_password($USER, $PWD2, $DOMAIN);
+
+    push @cleanups, sub {
+        ok( $ring->clear_password($USER, $DOMAIN) eq 1, "clearing");
+    };
+}
 
 # App and group change
+{
+    my $ring = Passwd::Keyring::Gnome->new(app=>$APP2, group=>$GROUP3);
 
-$ring = Passwd::Keyring::Gnome->new(app=>"Something else", group=>"Yet Yet so");
+    ok( defined($ring) && ref $ring eq 'Passwd::Keyring::Gnome', 'third new() works' );
 
-ok( defined($ring) && ref $ring eq 'Passwd::Keyring::Gnome', 'fourth new() works' );
+    ok( ! defined($ring->get_password($USER, $DOMAIN)), "changing group and app forces another password");
 
-ok( $ring->get_password($USER, $DOMAIN) eq $PWD, "get from another ring with changed app and group works");
+}
 
+# Re-reading original to check whether it was properly kept
+{
+    my $ring = Passwd::Keyring::Gnome->new(app=>$APP1, group=>$GROUP1);
+
+    ok( defined($ring) && ref $ring eq 'Passwd::Keyring::Gnome', 'second new() works' );
+
+    ok( $ring->get_password($USER, $DOMAIN) eq $PWD, "get original after changes in other group works");
+}
 
 # Cleanup
-ok( $orig_ring->clear_password($USER, $DOMAIN) eq 1, "clearing");
+foreach my $cleanup (@cleanups) {
+    $cleanup->();
+}
 

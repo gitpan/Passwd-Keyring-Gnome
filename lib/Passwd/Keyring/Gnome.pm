@@ -15,11 +15,11 @@ Passwd::Keyring::Gnome - Password storage implementation based on GNOME Keyring.
 
 =head1 VERSION
 
-Version 0.24
+Version 0.25
 
 =cut
 
-our $VERSION = '0.24';
+our $VERSION = '0.25';
 
 bootstrap Passwd::Keyring::Gnome $VERSION;
 
@@ -29,7 +29,10 @@ Gnome Keyring based implementation of L<Keyring>.
 
     use Passwd::Keyring::Gnome;
 
-    my $keyring = Passwd::Keyring::Gnome->new();
+    my $keyring = Passwd::Keyring::Gnome->new(
+         app=>"My beautiful app",     # in fact unimportant at the moment
+         group=>"My app passwords",   # visible in seahorse and used to separate different passwords
+    );
 
     $keyring->set_password("John", "verysecret", "my-pseudodomain");
     # And later, on next run maybe
@@ -43,10 +46,16 @@ Passwd::Keyring::Auto package).
 
 =head1 SUBROUTINES/METHODS
 
-=head2 new
+=head2 new(app=>'app name', group=>'passwords folder')
 
 Initializes the processing. Croaks if gnome keyring does not 
 seem to be available.
+
+Handled named parameters: 
+
+- app - symbolic app name (not used at the moment, but can be used in future as comment and in prompts, so set sensibly)
+
+- group - name for password group (will be visible in seahorse so can be used to find passwords, different group means different password set)
 
 =cut
 
@@ -54,7 +63,7 @@ sub new {
     my ($cls, %opts) = @_;
     my $self = {
         app => $opts{app} || 'Passwd::Keyring',
-        group => $opts{group} || 'Unclassified passwords',
+        group => $opts{group} || 'Passwd::Keyring unclassified passwords',
     };
     bless $self;
 

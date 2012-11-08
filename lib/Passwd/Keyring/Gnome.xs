@@ -5,7 +5,7 @@
 #include "glib.h"
 #include "gnome-keyring.h"
 
-const char* SERVER = "using_gnome_keyring";
+const char* SERVER = "Passwd.Gnome.Keyring";
 
 MODULE=Passwd::Keyring::Gnome    PACKAGE=Passwd::Keyring::Gnome 
 
@@ -22,13 +22,15 @@ _get_default_keyring_name()
 void
 _set_password(const char *user, const char* password, const char *domain, const char *app, const char *group)
     CODE:
+        /* Note: app is not used on purpose, it should not be part of the key */
+        /* TODO: switch into gnome_keyring_item API */
         guint32 item_id;
         if(GNOME_KEYRING_RESULT_OK == 
            gnome_keyring_set_network_password_sync(
               NULL, /* keyring (null=default) */
               user,
               domain,
-              app, /* SERVER, */ /* server */
+              SERVER, /* server */
               group, /*NULL,*/ /* remote object */
               NULL, /* protocol */
               NULL, /* auth-type */
@@ -53,7 +55,7 @@ _get_password(const char *user, const char *domain, const char *app, const char 
              gnome_keyring_find_network_password_sync(
                 user,
                 domain,
-                app, /*SERVER,*/ /* server */
+                SERVER, /* server */
                 group, /*NULL,*/ /* remote object */
                 NULL, /* protocol */
                 NULL, /* auth-type */
@@ -111,7 +113,7 @@ _clear_password(const char *user, const char *domain, const char *app, const cha
              gnome_keyring_find_network_password_sync(
                 user,
                 domain,
-                app, /*SERVER,*/ /* server */
+                SERVER, /* server */
                 group, /*NULL,*/ /* remote object */
                 NULL, /* protocol */
                 NULL, /* auth-type */

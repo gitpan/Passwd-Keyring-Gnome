@@ -1,5 +1,9 @@
 Revision history for Keyring-Gnome
 
+0.25    2012-11-08
+        Implementing updated app and group semantics (only group is part of password key,
+        app is not used at all for a moment).
+
 0.24    2012-11-07
         Handling application name and other API extensions documented
         in Keyring::Auto. App and group are visible in seahorse
