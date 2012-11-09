@@ -15,34 +15,44 @@ Passwd::Keyring::Gnome - Password storage implementation based on GNOME Keyring.
 
 =head1 VERSION
 
-Version 0.2501
+Version 0.2502
 
 =cut
 
-our $VERSION = '0.2501';
+our $VERSION = '0.2502';
 
 bootstrap Passwd::Keyring::Gnome $VERSION;
 
 =head1 SYNOPSIS
 
-Gnome Keyring based implementation of L<Keyring>.
+Gnome Keyring based implementation of L<Keyring>. Provide secure
+storage for passwords and similar sensitive data.
 
     use Passwd::Keyring::Gnome;
 
     my $keyring = Passwd::Keyring::Gnome->new(
-         app=>"My beautiful app",     # in fact unimportant at the moment
-         group=>"My app passwords",   # visible in seahorse and used to separate different passwords
+         app=>"blahblah scraper",
+         group=>"Johnny web scrapers",
     );
 
-    $keyring->set_password("John", "verysecret", "my-pseudodomain");
-    # And later, on next run maybe
-    my $password = $keyring->get_password("John", "my-pseudodomain");
-    # plus
-    $keyring->clear_password("John", "my-pseudodomain");
+    my $username = "John";  # or get from .ini, or from .argv...
 
-Note: see L<Passwd::Keyring::Auto::KeyringAPI> for detailed comments on
-keyring method semantics (this document is installed with
-Passwd::Keyring::Auto package).
+    my $password = $keyring->get_password($username, "blahblah.com");
+    unless( $password ) {
+        $password = <somehow interactively prompt for password>;
+
+        # securely save password for future use
+        $keyring->set_password($username, "blahblah.com");
+    }
+
+    login_somewhere_using($username, $password);
+    if( password_was_wrong ) {
+        $keyring->clear_password($username, "blahblah.com");
+    }
+
+Note: see L<Passwd::Keyring::Auto::KeyringAPI> for detailed comments
+on keyring method semantics (this document is installed with
+C<Passwd::Keyring::Auto> package).
 
 =head1 SUBROUTINES/METHODS
 
@@ -53,9 +63,13 @@ seem to be available.
 
 Handled named parameters: 
 
-- app - symbolic app name (not used at the moment, but can be used in future as comment and in prompts, so set sensibly)
+- app - symbolic application name (not used at the moment, but can be
+  used in future as comment and in prompts, so set sensibly)
 
-- group - name for password group (will be visible in seahorse so can be used to find passwords, different group means different password set)
+- group - name for the password group (will be visible in seahorse so
+  can be used by end user to manage passwords, different group means
+  different password set, a few apps may share the same group if they
+  need to use the same passwords set)
 
 =cut
 
@@ -154,7 +168,7 @@ L<https://bitbucket.org/Mekk/perl-keyring-gnome>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2010-2012 Marcin Kasperski.
+Copyright 2012 Marcin Kasperski.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of either: the GNU General Public License as published
