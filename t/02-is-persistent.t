@@ -2,7 +2,13 @@
 
 use strict;
 use warnings;
-use Test::Simple tests => 2;
+use Test::More;
+
+if($ENV{GNOME_KEYRING_CONTROL}) {
+    plan tests => 2;
+} else {
+    plan skip_all => "Keyring not available (not running under Gnome?), skipping tests";
+}
 
 use Passwd::Keyring::Gnome;
 

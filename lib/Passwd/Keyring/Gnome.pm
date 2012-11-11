@@ -4,9 +4,9 @@ use warnings;
 use strict;
 #use parent 'Keyring';
 
-require DynaLoader;
-#require AutoLoader;
+use Carp qw(croak);
 
+require DynaLoader;
 use base 'DynaLoader';
 
 =head1 NAME
@@ -15,11 +15,11 @@ Passwd::Keyring::Gnome - Password storage implementation based on GNOME Keyring.
 
 =head1 VERSION
 
-Version 0.2502
+Version 0.2503
 
 =cut
 
-our $VERSION = '0.2502';
+our $VERSION = '0.2503';
 
 bootstrap Passwd::Keyring::Gnome $VERSION;
 
@@ -83,24 +83,24 @@ sub new {
 
     # TODO: catch and rethrow exceptions
     my $name = Passwd::Keyring::Gnome::_get_default_keyring_name();
-    croak ("Gnome Keyring seems unavailable") unless $name;
+    croak ("Gnome Keyring seems unavailable (failed to read default keyring name)") unless $name;
 
     return $self;
 }
 
-=head2 set_password(username, password, domain)
+=head2 set_password(username, password, realm)
 
-Sets (stores) password identified by given domain for given user 
+Sets (stores) password identified by given realm for given user 
 
 =cut
 
 sub set_password {
-    my ($self, $user_name, $user_password, $domain) = @_;
-    Passwd::Keyring::Gnome::_set_password($user_name, $user_password, $domain,
+    my ($self, $user_name, $user_password, $realm) = @_;
+    Passwd::Keyring::Gnome::_set_password($user_name, $user_password, $realm,
                                           $self->{app}, $self->{group});
 }
 
-=head2 get_password($user_name, $domain)
+=head2 get_password($user_name, $realm)
 
 Reads previously stored password for given user in given app.
 If such password can not be found, returns undef.
@@ -108,14 +108,14 @@ If such password can not be found, returns undef.
 =cut
 
 sub get_password {
-    my ($self, $user_name, $domain) = @_;
-    my $pwd = Passwd::Keyring::Gnome::_get_password($user_name, $domain,
+    my ($self, $user_name, $realm) = @_;
+    my $pwd = Passwd::Keyring::Gnome::_get_password($user_name, $realm,
                                                     $self->{app}, $self->{group});
     #return undef if (!defined($pwd)) or $pwd eq "";
     return $pwd;
 }
 
-=head2 clear_password($user_name, $domain)
+=head2 clear_password($user_name, $realm)
 
 Removes given password (if present)
 
@@ -124,9 +124,9 @@ Returns how many passwords actually were removed
 =cut
 
 sub clear_password {
-    my ($self, $user_name, $domain) = @_;
+    my ($self, $user_name, $realm) = @_;
     return Passwd::Keyring::Gnome::_clear_password(
-        $user_name, $domain, $self->{app}, $self->{group});
+        $user_name, $realm, $self->{app}, $self->{group});
 }
 
 =head2 is_persistent

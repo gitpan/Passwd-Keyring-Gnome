@@ -19,7 +19,8 @@ my $builder = Module::Build->new(
         'Module::Build' => '0.19', # xs
         'ExtUtils::CBuilder' => 0,
         'Test::More' => 0,
-        'Test::Pod::Coverage' => '1.0.8',
+        'Test::Pod::Coverage' => '1.0',
+        'Pod::Readme' => 0,
     },
     configure_requires => {
         'Module::Build' => '0.36',

@@ -1,5 +1,11 @@
 Revision history for Keyring-Gnome
 
+0.2503	2012-11-11
+        Module can be installed without active Gnome session
+        (most tests are skipped in such case).
+
+        Fixed error in error reporting (lacking import of croak).
+
 0.2502	2012-11-09
 	Documentation improvements
 

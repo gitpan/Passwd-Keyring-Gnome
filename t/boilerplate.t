@@ -3,7 +3,14 @@
 use 5.006;
 use strict;
 use warnings;
-use Test::More tests => 3;
+use Test::More;
+
+if($ENV{GNOME_KEYRING_CONTROL}) {
+    plan tests => 3;
+} else {
+    plan skip_all => "Keyring not available (not running under Gnome?), skipping tests";
+}
+
 
 sub not_in_file_ok {
     my ($filename, %regex) = @_;

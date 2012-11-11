@@ -20,7 +20,7 @@ _get_default_keyring_name()
         RETVAL
 
 void
-_set_password(const char *user, const char* password, const char *domain, const char *app, const char *group)
+_set_password(const char *user, const char* password, const char *realm, const char *app, const char *group)
     CODE:
         /* Note: app is not used on purpose, it should not be part of the key */
         /* TODO: switch into gnome_keyring_item API */
@@ -29,7 +29,7 @@ _set_password(const char *user, const char* password, const char *domain, const 
            gnome_keyring_set_network_password_sync(
               NULL, /* keyring (null=default) */
               user,
-              domain,
+              realm,
               SERVER, /* server */
               group, /*NULL,*/ /* remote object */
               NULL, /* protocol */
@@ -48,13 +48,13 @@ _set_password(const char *user, const char* password, const char *domain, const 
 
 
 SV*
-_get_password(const char *user, const char *domain, const char *app, const char *group)
+_get_password(const char *user, const char *realm, const char *app, const char *group)
     CODE:
         GList *results;
         GnomeKeyringResult status = 
              gnome_keyring_find_network_password_sync(
                 user,
-                domain,
+                realm,
                 SERVER, /* server */
                 group, /*NULL,*/ /* remote object */
                 NULL, /* protocol */
@@ -105,14 +105,14 @@ _get_password(const char *user, const char *domain, const char *app, const char 
 
 
 int
-_clear_password(const char *user, const char *domain, const char *app, const char *group)
+_clear_password(const char *user, const char *realm, const char *app, const char *group)
     CODE:
         /* Zwraca ilość skasowanych haseł */
         GList *results;
         GnomeKeyringResult status = 
              gnome_keyring_find_network_password_sync(
                 user,
-                domain,
+                realm,
                 SERVER, /* server */
                 group, /*NULL,*/ /* remote object */
                 NULL, /* protocol */

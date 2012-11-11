@@ -3,7 +3,7 @@ NAME
     Keyring.
 
 VERSION
-    Version 0.2502
+    Version 0.2503
 
 SYNOPSIS
     Gnome Keyring based implementation of Keyring. Provide secure storage
@@ -50,14 +50,14 @@ SUBROUTINES/METHODS
     different password set, a few apps may share the same group if they need
     to use the same passwords set)
 
-  set_password(username, password, domain)
-    Sets (stores) password identified by given domain for given user
+  set_password(username, password, realm)
+    Sets (stores) password identified by given realm for given user
 
-  get_password($user_name, $domain)
+  get_password($user_name, $realm)
     Reads previously stored password for given user in given app. If such
     password can not be found, returns undef.
 
-  clear_password($user_name, $domain)
+  clear_password($user_name, $realm)
     Removes given password (if present)
 
     Returns how many passwords actually were removed
