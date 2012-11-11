@@ -28,7 +28,7 @@ name: Passwd-Keyring-Gnome
 provides:
   Passwd::Keyring::Gnome:
     file: lib/Passwd/Keyring/Gnome.pm
-    version: 0.2503
+    version: 0.2504
 requires:
   perl: 5.006
 resources:
@@ -36,4 +36,4 @@ resources:
   homepage: http://bitbucket.org/Mekk/perl-keyring-gnome
   license: http://dev.perl.org/licenses/
   repository: http://bitbucket.org/Mekk/perl-keyring-gnome
-version: 0.2503
+version: 0.2504

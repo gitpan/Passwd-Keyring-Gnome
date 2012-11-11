@@ -1,5 +1,8 @@
 Revision history for Keyring-Gnome
 
+0.2504	2012-11-11
+	Added example.
+
 0.2503	2012-11-11
         Module can be installed without active Gnome session
         (most tests are skipped in such case).
