@@ -15,11 +15,11 @@ Passwd::Keyring::Gnome - Password storage implementation based on GNOME Keyring.
 
 =head1 VERSION
 
-Version 0.2504
+Version 0.30
 
 =cut
 
-our $VERSION = '0.2504';
+our $VERSION = '0.30';
 
 bootstrap Passwd::Keyring::Gnome $VERSION;
 
@@ -96,8 +96,10 @@ Sets (stores) password identified by given realm for given user
 
 sub set_password {
     my ($self, $user_name, $user_password, $realm) = @_;
-    Passwd::Keyring::Gnome::_set_password($user_name, $user_password, $realm,
-                                          $self->{app}, $self->{group});
+    Passwd::Keyring::Gnome::_set_password(
+        $user_name, $user_password,
+        $realm, $self->{group},
+        "$self->{group}/$realm/$user_name (by $self->{app})");
 }
 
 =head2 get_password($user_name, $realm)
@@ -109,8 +111,8 @@ If such password can not be found, returns undef.
 
 sub get_password {
     my ($self, $user_name, $realm) = @_;
-    my $pwd = Passwd::Keyring::Gnome::_get_password($user_name, $realm,
-                                                    $self->{app}, $self->{group});
+    my $pwd = Passwd::Keyring::Gnome::_get_password(
+        $user_name, $realm, $self->{group});
     #return undef if (!defined($pwd)) or $pwd eq "";
     return $pwd;
 }
@@ -126,7 +128,7 @@ Returns how many passwords actually were removed
 sub clear_password {
     my ($self, $user_name, $realm) = @_;
     return Passwd::Keyring::Gnome::_clear_password(
-        $user_name, $realm, $self->{app}, $self->{group});
+        $user_name, $realm, $self->{group});
 }
 
 =head2 is_persistent

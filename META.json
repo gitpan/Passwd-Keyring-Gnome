@@ -46,7 +46,7 @@
    "provides" : {
       "Passwd::Keyring::Gnome" : {
          "file" : "lib/Passwd/Keyring/Gnome.pm",
-         "version" : "0.2504"
+         "version" : "0.30"
       }
    },
    "release_status" : "stable",
@@ -62,5 +62,5 @@
          "url" : "http://bitbucket.org/Mekk/perl-keyring-gnome"
       }
    },
-   "version" : "0.2504"
+   "version" : "0.30"
 }

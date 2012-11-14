@@ -1,5 +1,17 @@
 Revision history for Keyring-Gnome
 
+0.30	2012-11-14
+        Reworked internal implementation. Instead of artificially saving
+        passwords as network passwords, module now uses it's own password
+        schema. Final result:
+
+	- passwords are visible in seahorse with label constructed as
+	    "group/realm/username (by app)"
+
+	- in password details (double click password and go to details tab) 
+          there are fields named group, realm and user, appropriately 
+          matching library API
+
 0.2504	2012-11-11
 	Added example.
 

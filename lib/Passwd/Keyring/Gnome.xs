@@ -7,6 +7,16 @@
 
 const char* SERVER = "Passwd.Gnome.Keyring";
 
+GnomeKeyringPasswordSchema PASSWD_KEYRING_SCHEMA = {
+    GNOME_KEYRING_ITEM_GENERIC_SECRET,
+    {
+       { "group", GNOME_KEYRING_ATTRIBUTE_TYPE_STRING },
+       { "realm", GNOME_KEYRING_ATTRIBUTE_TYPE_STRING },
+       { "user", GNOME_KEYRING_ATTRIBUTE_TYPE_STRING },
+       { NULL, 0 }
+    }
+};
+
 MODULE=Passwd::Keyring::Gnome    PACKAGE=Passwd::Keyring::Gnome 
 
 SV*
@@ -20,77 +30,45 @@ _get_default_keyring_name()
         RETVAL
 
 void
-_set_password(const char *user, const char* password, const char *realm, const char *app, const char *group)
+_set_password(const char *user, const char* password, const char *realm, const char *group, const char *label)
     CODE:
-        /* Note: app is not used on purpose, it should not be part of the key */
-        /* TODO: switch into gnome_keyring_item API */
-        guint32 item_id;
-        if(GNOME_KEYRING_RESULT_OK == 
-           gnome_keyring_set_network_password_sync(
-              NULL, /* keyring (null=default) */
-              user,
-              realm,
-              SERVER, /* server */
-              group, /*NULL,*/ /* remote object */
-              NULL, /* protocol */
-              NULL, /* auth-type */
-              0,    /* port */
-              password,    
-              &item_id))
+        GnomeKeyringResult status = 
+            gnome_keyring_store_password_sync(
+                &PASSWD_KEYRING_SCHEMA,
+                NULL, /* use default keyring */
+                label, /* display name */
+                password,
+                "group", group,
+                "realm", realm,
+                "user", user,
+                NULL);
+
+        if(status == GNOME_KEYRING_RESULT_OK)
         {
-              /* printf("Saved password, id: %d\n", item_id); */
-              return;
+            return;
         }
         else
         {
-                croak("Failed to set password");
+            croak("Failed to set password %s", gnome_keyring_result_to_message(status));
         }
 
 
 SV*
-_get_password(const char *user, const char *realm, const char *app, const char *group)
+_get_password(const char *user, const char *realm, const char *group)
     CODE:
-        GList *results;
+        char *passwd;
         GnomeKeyringResult status = 
-             gnome_keyring_find_network_password_sync(
-                user,
-                realm,
-                SERVER, /* server */
-                group, /*NULL,*/ /* remote object */
-                NULL, /* protocol */
-                NULL, /* auth-type */
-                0,    /* port */
-                &results);
+             gnome_keyring_find_password_sync(
+                &PASSWD_KEYRING_SCHEMA,
+                &passwd,
+                "group", group,
+                "realm", realm,
+                "user", user,
+                NULL);
         if(status == GNOME_KEYRING_RESULT_OK)
         {
-            GList *node;
-            GnomeKeyringNetworkPasswordData *item;
-            RETVAL = 0;
-            for (node = g_list_first (results);
-                 node != NULL;
-                 node = g_list_next (node))
-            {
-              item = (GnomeKeyringNetworkPasswordData *) node->data;
-              RETVAL = newSVpv(item->password, 0);
-              /*
-              printf("Found item.\n");
-              printf("  item-id: %d\n", item->item_id);
-              printf("  keyring: %s\n", item->keyring);
-              printf("  server: %s\n", item->server);
-              printf("  object: %s\n", item->object);
-              printf("  port: %d\n", item->port);
-              printf("  user: %s\n", item->user);
-              printf("  domain: %s\n", item->domain);
-              printf("  password: %s\n", item->password); */
-              break;
-            }
-
-            if(! RETVAL)
-            {
-               RETVAL = newSV(0);
-            }
-
-            gnome_keyring_network_password_list_free(results);
+           RETVAL = newSVpv(passwd, 0);
+           gnome_keyring_free_password(passwd);
         }
         else if (status == GNOME_KEYRING_RESULT_NO_MATCH)
         {
@@ -98,60 +76,27 @@ _get_password(const char *user, const char *realm, const char *app, const char *
         }
         else
         {
-            croak("Failed to find a password. Error code: %d", status);
+            croak("Failed to find a password %s", gnome_keyring_result_to_message(status));
         }
     OUTPUT:
         RETVAL
 
 
 int
-_clear_password(const char *user, const char *realm, const char *app, const char *group)
+_clear_password(const char *user, const char *realm, const char *group)
     CODE:
         /* Zwraca ilość skasowanych haseł */
-        GList *results;
+
         GnomeKeyringResult status = 
-             gnome_keyring_find_network_password_sync(
-                user,
-                realm,
-                SERVER, /* server */
-                group, /*NULL,*/ /* remote object */
-                NULL, /* protocol */
-                NULL, /* auth-type */
-                0,    /* port */
-                &results);
+             gnome_keyring_delete_password_sync(
+                &PASSWD_KEYRING_SCHEMA,
+                "group", group,
+                "realm", realm,
+                "user", user,
+                NULL);
         if(status == GNOME_KEYRING_RESULT_OK)
         {
-            GList *node;
-            GnomeKeyringNetworkPasswordData *item;
-            RETVAL = 0;
-            for (node = g_list_first (results);
-                 node != NULL;
-                 node = g_list_next (node))
-            {
-              item = (GnomeKeyringNetworkPasswordData *) node->data;
-              status = gnome_keyring_item_delete_sync(
-                     item->keyring, item->item_id);
-              if(status != GNOME_KEYRING_RESULT_OK)
-              {
-                  croak("Failed to delete password %d. Error code: %d",
-                        item->item_id, status);
-              }
-              ++ RETVAL;
-              /*
-              printf("Found item.\n");
-              printf("  item-id: %d\n", item->item_id);
-              printf("  keyring: %s\n", item->keyring);
-              printf("  server: %s\n", item->server);
-              printf("  object: %s\n", item->object);
-              printf("  port: %d\n", item->port);
-              printf("  user: %s\n", item->user);
-              printf("  domain: %s\n", item->domain);
-              printf("  password: %s\n", item->password); */
-              break;
-
-            }
-
-            gnome_keyring_network_password_list_free(results);
+           RETVAL = 1;
         }
         else if (status == GNOME_KEYRING_RESULT_NO_MATCH)
         {
@@ -159,7 +104,7 @@ _clear_password(const char *user, const char *realm, const char *app, const char
         }
         else
         {
-            croak("Failed to check password. Error code: %d", status);
+            croak("Failed to delete a password %s", gnome_keyring_result_to_message(status));
         }
     OUTPUT:
         RETVAL
