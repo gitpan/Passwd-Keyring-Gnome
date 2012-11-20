@@ -1,5 +1,9 @@
 Revision history for Keyring-Gnome
 
+0.3001	2012-11-20
+        Fixed some dependencies to make automated tests pass or fail properly
+        (should resolve a couple of cpantesters reports).
+
 0.30	2012-11-14
         Reworked internal implementation. Instead of artificially saving
         passwords as network passwords, module now uses it's own password
@@ -11,6 +15,8 @@ Revision history for Keyring-Gnome
 	- in password details (double click password and go to details tab) 
           there are fields named group, realm and user, appropriately 
           matching library API
+
+        Warnings: passwords saved with older version won't be found.
 
 0.2504	2012-11-11
 	Added example.

@@ -3,7 +3,7 @@ NAME
     Keyring.
 
 VERSION
-    Version 0.30
+    Version 0.3001
 
 SYNOPSIS
     Gnome Keyring based implementation of Keyring. Provide secure storage

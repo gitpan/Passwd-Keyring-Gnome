@@ -9,4 +9,4 @@ BEGIN {
 }
 
 diag( "Testing Passwd::Keyring::Gnome $Passwd::Keyring::Gnome::VERSION, Perl $], $^X" );
-diag( "Consider spawning  seahorse  and checking whether all passwords are properly wiped after tests" );
+diag( "Consider spawning  seahorse  and observing password changes caused by tests" );

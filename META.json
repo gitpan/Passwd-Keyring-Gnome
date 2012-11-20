@@ -4,7 +4,7 @@
       "Marcin Kasperski <Marcin.Kasperski@mekk.waw.pl>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.110440",
+   "generated_by" : "Module::Build version 0.4003, CPAN::Meta::Converter version 2.120921",
    "keywords" : [
       "passwords",
       "security",
@@ -25,15 +25,16 @@
    "prereqs" : {
       "build" : {
          "requires" : {
-            "ExtUtils::CBuilder" : 0,
+            "ExtUtils::CBuilder" : "0",
             "Module::Build" : "0.19",
-            "Pod::Readme" : 0,
-            "Test::More" : 0,
+            "Pod::Readme" : "0",
+            "Test::More" : "0",
             "Test::Pod::Coverage" : "1.0"
          }
       },
       "configure" : {
          "requires" : {
+            "ExtUtils::PkgConfig" : "1.12",
             "Module::Build" : "0.36"
          }
       },
@@ -46,7 +47,7 @@
    "provides" : {
       "Passwd::Keyring::Gnome" : {
          "file" : "lib/Passwd/Keyring/Gnome.pm",
-         "version" : "0.30"
+         "version" : "0.3001"
       }
    },
    "release_status" : "stable",
@@ -62,5 +63,5 @@
          "url" : "http://bitbucket.org/Mekk/perl-keyring-gnome"
       }
    },
-   "version" : "0.30"
+   "version" : "0.3001"
 }
