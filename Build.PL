@@ -36,6 +36,10 @@ my $builder = Module::Build->new(
         'perl' => 5.006,
     },
 
+    share_dir => {
+        dist => [ 'example' ],
+    },
+
     create_makefile_pl => 'small', # not 'traditional', we test for libraries in Build.pl
     add_to_cleanup      => [ 'Passwd-Keyring-Gnome-*' ],
 

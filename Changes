@@ -1,5 +1,11 @@
 Revision history for Keyring-Gnome
 
+0.3002	2013-07-04
+	A few improvements in documentation and tests: 
+        - fixed bitbucket #1 - wrong example of set_password,
+        - renamed example and ensured it is distributed,
+        - named some tests better
+
 0.3001	2012-11-20
         Fixed some dependencies to make automated tests pass or fail properly
         (should resolve a couple of cpantesters reports).

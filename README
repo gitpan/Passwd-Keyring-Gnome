@@ -3,7 +3,7 @@ NAME
     Keyring.
 
 VERSION
-    Version 0.3001
+    Version 0.3002
 
 SYNOPSIS
     Gnome Keyring based implementation of Keyring. Provide secure storage
@@ -23,7 +23,7 @@ SYNOPSIS
             $password = <somehow interactively prompt for password>;
 
             # securely save password for future use
-            $keyring->set_password($username, "blahblah.com");
+            $keyring->set_password($username, $password, "blahblah.com");
         }
 
         login_somewhere_using($username, $password);

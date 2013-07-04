@@ -15,11 +15,11 @@ Passwd::Keyring::Gnome - Password storage implementation based on GNOME Keyring.
 
 =head1 VERSION
 
-Version 0.3001
+Version 0.3002
 
 =cut
 
-our $VERSION = '0.3001';
+our $VERSION = '0.3002';
 
 bootstrap Passwd::Keyring::Gnome $VERSION;
 
@@ -42,7 +42,7 @@ storage for passwords and similar sensitive data.
         $password = <somehow interactively prompt for password>;
 
         # securely save password for future use
-        $keyring->set_password($username, "blahblah.com");
+        $keyring->set_password($username, $password, "blahblah.com");
     }
 
     login_somewhere_using($username, $password);

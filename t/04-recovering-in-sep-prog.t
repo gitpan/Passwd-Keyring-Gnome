@@ -19,13 +19,13 @@ my $ring = Passwd::Keyring::Gnome->new(app=>"Passwd::Keyring::Gnome", group=>"Un
 
 ok( defined($ring) && ref $ring eq 'Passwd::Keyring::Gnome',   'new() works' );
 
-ok( ! defined($ring->get_password("Paul", $SOME_REALM)), "get works");
+ok( ! defined($ring->get_password("Paul", $SOME_REALM)), "no phantom");
 
-ok( $ring->get_password("Gregory", $SOME_REALM) eq 'secret-Greg', "get works");
+ok( $ring->get_password("Gregory", $SOME_REALM) eq 'secret-Greg', "get in new prog works");
 
-ok( $ring->get_password("Paul", $OTHER_REALM) eq 'secret-Paul2', "get works");
+ok( $ring->get_password("Paul", $OTHER_REALM) eq 'secret-Paul2', "get in new prog works");
 
-ok( $ring->get_password("Duke", $SOME_REALM) eq 'secret-Duke', "get works");
+ok( $ring->get_password("Duke", $SOME_REALM) eq 'secret-Duke', "get in new prog works");
 
 ok( $ring->clear_password("Gregory", $SOME_REALM) eq 1, "clear clears");
 
