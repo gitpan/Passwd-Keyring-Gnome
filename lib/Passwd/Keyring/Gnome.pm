@@ -15,11 +15,11 @@ Passwd::Keyring::Gnome - Password storage implementation based on GNOME Keyring.
 
 =head1 VERSION
 
-Version 0.3002
+Version 0.3003
 
 =cut
 
-our $VERSION = '0.3002';
+our $VERSION = '0.3003';
 
 bootstrap Passwd::Keyring::Gnome $VERSION;
 
